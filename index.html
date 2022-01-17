@@ -17,7 +17,7 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
     rel="stylesheet">
-
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link rel="icon" type="image/png" href="icons/hekatoslogo-32x32.png" sizes="32x32">
 </head>
 
@@ -140,9 +140,16 @@
       
       var repoURLElem = document.getElementById("group1-template").content.cloneNode(true);
       repoURLElem.querySelector('#repo-url').innerText = repo;
-      repoURLElem.insertBefore(repoImageElem, repoURLElem.querySelector('#repo-url'));
       if (isRepositoryPiracy(repo)) {
+        warningIconElem = document.createElement("i");
+        warningIconElem.className = "fa fa-exclamation-triangle"
+        warningIconElem.setAttribute("aria-hidden", true)
+        warningIconElem.setAttribute("style", "text-align: center; color: var(--nord13); font-size:75px; margin-top: 30px; margin-left: auto; margin-right: auto; display: block;")
         repoURLElem.querySelector('#piracy-warning').removeAttribute("hidden")
+        repoURLElem.insertBefore(warningIconElem, repoURLElem.querySelector('#repo-url'));
+      }
+      else {
+        repoURLElem.insertBefore(repoImageElem, repoURLElem.querySelector('#repo-url'));
       }
       
       var repoButtonsElem = document.getElementById("repo-btns-template").content.cloneNode(true);
