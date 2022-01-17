@@ -2,15 +2,13 @@
 <html lang="en">
 
 <head>
-
-  <meta property="og:title" content="Hekatos Repository">
+  <meta property="og:title" content="">
   <meta property="og:type" content="website">
-  <meta property="og:image" content="https://bypass.beerpsi.me/repo/icons/hekatoslogo.png">
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-  <meta property="og:description" content="Combatting jailbreak detection, one tweak at a time">
-  <meta property="description" content="Combatting jailbreak detection, one tweak at a time">
+  <meta property="og:description" content="Add this repo to your favorite package manager">
+  <meta property="description" content="Add this repo to your favorite package manager">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="css/repo.css" />
   <link rel="stylesheet" href="css/nord.css" />
@@ -21,6 +19,19 @@
     rel="stylesheet">
 
   <link rel="icon" type="image/png" href="icons/hekatoslogo-32x32.png" sizes="32x32">
+  <script>
+    var urlParams = new URLSearchParams(window.location.search);
+    var repo = urlParams.get('repo');
+    titleElem = document.querySelector('meta[property="og:title"]');
+    if (repo != null) {
+      titleElem.setAttribute("content", repo)
+    }
+    else {
+      titleElem.setAttribute("content", "sharerepo thing")
+      document.querySelector('meta[property="og:description"]').setAttribute("content", "Quickly share repositories, irrespective of package managers.");
+      document.querySelector('meta[property="description"]').setAttribute("content", "Quickly share repositories, irrespective of package managers.");
+    }
+  </script>
 </head>
 
 <body>
