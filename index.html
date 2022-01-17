@@ -117,17 +117,16 @@
         repoImageElem.id = "logo-main";
         repoImageElem.onload = () => {
           image = document.getElementById("logo-main");
-          if (image.complete && image.naturalHeight == 0){
+          if (image.complete && image.naturalHeight > 0){
             image.removeAttribute("hidden")
             image.className = "logo-main";
           }
         }
         repoImageElem.src = `${repo.replace(/\/$/, '')}/CydiaIcon.png`;
         
-
         var repoURLElem = document.getElementById("group1-template").content.cloneNode(true);
-        repoURLElem.insertBefore(repoImageElem, repoURLElem.querySelector('h1'));
         repoURLElem.querySelector('h1').innerText = repo;
+        repoURLElem.insertBefore(repoImageElem, repoURLElem.querySelector('h1'));
 
         var repoButtonsElem = document.getElementById("repo-btns-template").content.cloneNode(true);
         for (var key in pkgman) {
