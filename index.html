@@ -113,10 +113,13 @@
         };
         var repoImageElem = new Image();
         repoImageElem.src = `${repo.replace(/\/$/, '')}/CydiaIcon.png`;
+        repoImageElem.loading = "eager";
         repoImageElem.className = "logo-main";
 
         var repoURLElem = document.getElementById("group1-template").content.cloneNode(true);
-        repoURLElem.insertBefore(repoImageElem, repoURLElem.querySelector('h1'));
+        if (repoImageElem.complete && repoImageElem.naturalHeight > 0) {
+          repoURLElem.insertBefore(repoImageElem, repoURLElem.querySelector('h1'));
+        }
         repoURLElem.querySelector('h1').innerText = repo;
 
         var repoButtonsElem = document.getElementById("repo-btns-template").content.cloneNode(true);
