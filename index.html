@@ -112,7 +112,7 @@
           "saily": `apt-repo://${repo}`
         };
         var repoImageElem = new Image();
-        repoImageElem.src = new URL('CydiaIcon.png', repo).href;
+        repoImageElem.src = `${repo.replace(/\/$/, '')}/CydiaIcon.png`;
         repoImageElem.className = "logo-main";
 
         var repoURLElem = document.getElementById("group1-template").content.cloneNode(true);
