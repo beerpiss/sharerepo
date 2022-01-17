@@ -109,51 +109,49 @@
       usageElem.appendChild(usage);
       usageElem.removeAttribute("hidden");
     }
+    else if (isRepositoryDefault(repo)) {
+      usage = document.getElementById("usage-template").content.cloneNode(true);
+      usage.querySelector('h1').innerText = `Cannot add default repo: ${repo}`;
+      
+      usageElem = document.getElementById("usage");
+      usageElem.appendChild(usage);
+      usageElem.removeAttribute("hidden");
+    }
     else {
-      if (isRepositoryDefault(repo)) {
-        usage = document.getElementById("usage-template").content.cloneNode(true);
-        usage.querySelector('h1').innerText = `Cannot add default repo: ${repo}`;
-        
-        usageElem = document.getElementById("usage");
-        usageElem.appendChild(usage);
-        usageElem.removeAttribute("hidden");
+      var pkgman = {
+        "cydia": `https://cydia.saurik.com/api/share#?source=${repo}`,
+        "sileo": `sileo://source/${repo}`,
+        "zebra": `zbra://${repo}`,
+        "installer": `installer://add/${repo}`,
+        "saily": `apt-repo://${repo}`
+      };
+      var repoImageElem = new Image();
+      repoImageElem.setAttribute("hidden", "");
+      repoImageElem.loading = "eager";
+      repoImageElem.id = "logo-main";
+      repoImageElem.onload = () => {
+        image = document.getElementById("logo-main");
+        if (image.complete && image.naturalHeight > 0){
+          image.removeAttribute("hidden")
+          image.className = "logo-main";
+        }
       }
-      else {
-        var pkgman = {
-          "cydia": `https://cydia.saurik.com/api/share#?source=${repo}`,
-          "sileo": `sileo://source/${repo}`,
-          "zebra": `zbra://${repo}`,
-          "installer": `installer://add/${repo}`,
-          "saily": `apt-repo://${repo}`
-        };
-        var repoImageElem = new Image();
-        repoImageElem.setAttribute("hidden", "");
-        repoImageElem.loading = "eager";
-        repoImageElem.id = "logo-main";
-        repoImageElem.onload = () => {
-          image = document.getElementById("logo-main");
-          if (image.complete && image.naturalHeight > 0){
-            image.removeAttribute("hidden")
-            image.className = "logo-main";
-          }
-        }
-        repoImageElem.src = `${repo.replace(/\/$/, '')}/CydiaIcon.png`;
-        
-        var repoURLElem = document.getElementById("group1-template").content.cloneNode(true);
-        repoURLElem.querySelector('#repo-url').innerText = repo;
-        repoURLElem.insertBefore(repoImageElem, repoURLElem.querySelector('#repo-url'));
-        if (isRepositoryPiracy(repo)) {
-          repoURLElem.querySelector('#piracy-warning').removeAttribute("hidden")
-        }
-        
-        var repoButtonsElem = document.getElementById("repo-btns-template").content.cloneNode(true);
-        for (var key in pkgman) {
-          repoButtonsElem.querySelector(`#${key}`).href = pkgman[key];
-        }
+      repoImageElem.src = `${repo.replace(/\/$/, '')}/CydiaIcon.png`;
+      
+      var repoURLElem = document.getElementById("group1-template").content.cloneNode(true);
+      repoURLElem.querySelector('#repo-url').innerText = repo;
+      repoURLElem.insertBefore(repoImageElem, repoURLElem.querySelector('#repo-url'));
+      if (isRepositoryPiracy(repo)) {
+        repoURLElem.querySelector('#piracy-warning').removeAttribute("hidden")
+      }
+      
+      var repoButtonsElem = document.getElementById("repo-btns-template").content.cloneNode(true);
+      for (var key in pkgman) {
+        repoButtonsElem.querySelector(`#${key}`).href = pkgman[key];
+      }
 
-        document.getElementById("group1").appendChild(repoURLElem);
-        document.getElementById("repo-btns").appendChild(repoButtonsElem);
-      }
+      document.getElementById("group1").appendChild(repoURLElem);
+      document.getElementById("repo-btns").appendChild(repoButtonsElem);
     }
   </script>
 </body>
