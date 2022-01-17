@@ -68,6 +68,15 @@
   <script>
     var urlParams = new URLSearchParams(window.location.search);
     var repo = urlParams.get('repo');
+    var defaultRepos = [
+      "apt.bingner.com/",
+      "apt.procurs.us/",
+      "apt.saurik.com/",
+      "apt.oldcurs.us/",
+      "repo.chimera.sh/",
+      "diatr.us/apt",
+      "repo.theodyssey.dev/",
+    ]
     if (repo == null){
       usage = document.getElementById("usage-template").content.cloneNode(true);
       usage.querySelector('h1').innerText = `Usage: ${window.location.href}?repo=YOUR_REPO_URL`;
@@ -77,28 +86,39 @@
       usageElem.removeAttribute("hidden");
     }
     else {
-      var pkgman = {
-        "cydia": `https://cydia.saurik.com/api/share#?source=${repo}`,
-        "sileo": `sileo://source/${repo}`,
-        "zebra": `zbra://${repo}`,
-        "installer": `installer://add/${repo}`,
-        "saily": `apt-repo://${repo}`
-      };
-      var repoImage = new Image();
-      repoImage.src = new URL('CydiaIcon.png', repo).href;
-      repoImage.className = "logo-main";
-
-      var repoURL = document.getElementById("group1-template").content.cloneNode(true);
-      repoURL.insertBefore(repoImage, repoURL.querySelector('h1'));
-      repoURL.querySelector('h1').innerText = repo;
-
-      var repoButtons = document.getElementById("repo-btns-template").content.cloneNode(true);
-      for (var key in pkgman) {
-        repoButtons.querySelector(`#${key}`).href = pkgman[key];
+      var repoURL = new URL(repo)
+      if (defaultRepos.includes(repoURL.hostname + repoURL.pathname)) {
+        usage = document.getElementById("usage-template").content.cloneNode(true);
+        usage.querySelector('h1').innerText = `Cannot add default repo: ${repo}`;
+        
+        usageElem = document.getElementById("usage");
+        usageElem.appendChild(usage);
+        usageElem.removeAttribute("hidden");
       }
+      else {
+        var pkgman = {
+          "cydia": `https://cydia.saurik.com/api/share#?source=${repo}`,
+          "sileo": `sileo://source/${repo}`,
+          "zebra": `zbra://${repo}`,
+          "installer": `installer://add/${repo}`,
+          "saily": `apt-repo://${repo}`
+        };
+        var repoImageElem = new Image();
+        repoImageElem.src = new URL('CydiaIcon.png', repo).href;
+        repoImageElem.className = "logo-main";
 
-      document.getElementById("group1").appendChild(repoURL);
-      document.getElementById("repo-btns").appendChild(repoButtons);
+        var repoURLElem = document.getElementById("group1-template").content.cloneNode(true);
+        repoURLElem.insertBefore(repoImageElem, repoURLElem.querySelector('h1'));
+        repoURLElem.querySelector('h1').innerText = repo;
+
+        var repoButtonsElem = document.getElementById("repo-btns-template").content.cloneNode(true);
+        for (var key in pkgman) {
+          repoButtonsElem.querySelector(`#${key}`).href = pkgman[key];
+        }
+
+        document.getElementById("group1").appendChild(repoURLElem);
+        document.getElementById("repo-btns").appendChild(repoButtonsElem);
+      }
     }
   </script>
 </body>
