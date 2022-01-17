@@ -29,7 +29,13 @@
   </template>
 
   <template id="group1-template">
-    <h1></h1>
+    <h1 id="repo-url"></h1>
+    <h3 hidden id="piracy-warning">
+      You are attempting to add a repository that is known to be harmful for reasons such as piracy, illegal content, or malware.<br><br>
+
+      Repositories marked as harmful often distribute software with unexpected effects, whether in the form of paid packages for free or other malicious packages. This can have lasting effects on your device and privacy, even sometimes affecting your ability to jailbreak.<br> 
+      We recommend that you exercise extreme caution to avoid harmful software.<br>
+    </h1>
   </template>
 
   <template id="repo-btns-template">
@@ -66,6 +72,15 @@
   </div>
 
   <script>
+    function isRepositoryPiracy(repo){
+      request = new XMLHttpRequest();
+      request.open('GET', 'https://raw.githubusercontent.com/cnstr/manifests/gh-pages/piracy-repositories.json', false);
+      request.send(null);
+
+      piracyList = JSON.parse(request.responseText)
+      return piracyList.includes((new URL(repo)).hostname)
+    }
+
     function isRepositoryDefault(repo){
       repo = repo.replace(/\/$/, '');
       var defaultRepos = [
@@ -125,9 +140,12 @@
         repoImageElem.src = `${repo.replace(/\/$/, '')}/CydiaIcon.png`;
         
         var repoURLElem = document.getElementById("group1-template").content.cloneNode(true);
-        repoURLElem.querySelector('h1').innerText = repo;
-        repoURLElem.insertBefore(repoImageElem, repoURLElem.querySelector('h1'));
-
+        repoURLElem.querySelector('#repo-url').innerText = repo;
+        repoURLElem.insertBefore(repoImageElem, repoURLElem.querySelector('#repo-url'));
+        if (isRepositoryPiracy(repo)) {
+          repoURLElem.querySelector('#piracy-warning').removeAttribute("hidden")
+        }
+        
         var repoButtonsElem = document.getElementById("repo-btns-template").content.cloneNode(true);
         for (var key in pkgman) {
           repoButtonsElem.querySelector(`#${key}`).href = pkgman[key];

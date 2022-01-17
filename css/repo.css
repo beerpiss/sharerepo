@@ -3,6 +3,10 @@ h1 {
     margin: 25px 30px;
 }
 
+h3 {
+    text-align: justify;
+}
+
 .logo-main {
     width: 150px;
     margin-top: 30px;
@@ -54,6 +58,10 @@ body>div {
 .btn >div
 {
     overflow: visible;
+}
+
+#piracy-warning {
+    color: var(--nord11);
 }
 
 #installer {
@@ -121,6 +129,11 @@ span {
     h1 {
         text-align: center;
         margin: 25px 30px;
+        font-size: 25px;
+    }
+
+    h3 {
+        font-size: 20px;
     }
 
     img.logo-main {
