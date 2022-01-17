@@ -24,6 +24,12 @@
 </head>
 
 <body>
+  <template id="usage-template">
+    <center>
+      <h1></h1>
+    </center>
+  </template>
+
   <template id="group1-template">
     <h1></h1>
   </template>
@@ -56,6 +62,7 @@
   </template>
 
   <div>
+    <div hidden id="usage"></div>
     <div id="group1" class="group1"></div>
     <div id="repo-btns" class="repo-btns"></div>
   </div>
@@ -63,27 +70,37 @@
   <script>
     var urlParams = new URLSearchParams(window.location.search);
     var repo = urlParams.get('repo');
-    var pkgman = {
-      "cydia": `https://cydia.saurik.com/api/share#?source=${repo}`,
-      "sileo": `sileo://source/${repo}`,
-      "zebra": `zbra://${repo}`,
-      "installer": `installer://add/${repo}`,
-      "saily": `apt-repo://${repo}`
-    };
-    var repoImage = new Image();
-    repoImage.src = new URL('CydiaIcon.png', repo).href;
-    repoImage.className = "logo-main";
-
-    var repoURL = document.getElementById("group1-template").content.cloneNode(true);
-    repoURL.insertBefore(repoImage, repoURL.querySelector('h1'));
-    repoURL.querySelector('h1').innerText = repo;
-
-    var repoButtons = document.getElementById("repo-btns-template").content.cloneNode(true);
-    for (var key in pkgman) {
-      repoButtons.querySelector(`#${key}`).href = pkgman[key];
+    if (repo == null){
+      usage = document.getElementById("usage-template").content.cloneNode(true);
+      usage.querySelector('h1').innerText = `Usage: ${window.location.href}?repo=YOUR_REPO_URL`;
+      
+      usageElem = document.getElementById("usage");
+      usageElem.appendChild(usage);
+      usageElem.removeAttribute("hidden");
     }
+    else {
+      var pkgman = {
+        "cydia": `https://cydia.saurik.com/api/share#?source=${repo}`,
+        "sileo": `sileo://source/${repo}`,
+        "zebra": `zbra://${repo}`,
+        "installer": `installer://add/${repo}`,
+        "saily": `apt-repo://${repo}`
+      };
+      var repoImage = new Image();
+      repoImage.src = new URL('CydiaIcon.png', repo).href;
+      repoImage.className = "logo-main";
 
-    document.getElementById("group1").appendChild(repoURL);
-    document.getElementById("repo-btns").appendChild(repoButtons);
+      var repoURL = document.getElementById("group1-template").content.cloneNode(true);
+      repoURL.insertBefore(repoImage, repoURL.querySelector('h1'));
+      repoURL.querySelector('h1').innerText = repo;
+
+      var repoButtons = document.getElementById("repo-btns-template").content.cloneNode(true);
+      for (var key in pkgman) {
+        repoButtons.querySelector(`#${key}`).href = pkgman[key];
+      }
+
+      document.getElementById("group1").appendChild(repoURL);
+      document.getElementById("repo-btns").appendChild(repoButtons);
+    }
   </script>
 </body>
