@@ -66,17 +66,23 @@
   </div>
 
   <script>
+    function isRepositoryDefault(repo){
+      repo = repo.replace(/\/$/, '');
+      var defaultRepos = [
+        "apt.bingner.com/",
+        "apt.procurs.us/",
+        "apt.saurik.com/",
+        "apt.oldcurs.us/",
+        "repo.chimera.sh/",
+        "diatr.us/apt",
+        "repo.theodyssey.dev/",
+      ];
+      var repoURL = new URL(repo)
+      return defaultRepos.includes(repoURL.hostname + repoURL.pathname)
+    }
+
     var urlParams = new URLSearchParams(window.location.search);
-    var repo = urlParams.get('repo').replace(/\/$/, '');
-    var defaultRepos = [
-      "apt.bingner.com/",
-      "apt.procurs.us/",
-      "apt.saurik.com/",
-      "apt.oldcurs.us/",
-      "repo.chimera.sh/",
-      "diatr.us/apt",
-      "repo.theodyssey.dev/",
-    ]
+    var repo = urlParams.get('repo');
     if (repo == null){
       usage = document.getElementById("usage-template").content.cloneNode(true);
       usage.querySelector('h1').innerText = `Usage: ${window.location.href}?repo=YOUR_REPO_URL`;
@@ -86,8 +92,7 @@
       usageElem.removeAttribute("hidden");
     }
     else {
-      var repoURL = new URL(repo)
-      if (defaultRepos.includes(repoURL.hostname + repoURL.pathname)) {
+      if (isRepositoryDefault(repo)) {
         usage = document.getElementById("usage-template").content.cloneNode(true);
         usage.querySelector('h1').innerText = `Cannot add default repo: ${repo}`;
         
