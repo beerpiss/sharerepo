@@ -123,9 +123,6 @@
         "installer": `installer://add/${repo}`,
         "saily": `apt-repo://${repo}`
       };
-      if (pkgman != null) {
-        window.location.replace(pkgmanDict[pkgman.toLowerCase()])
-      }
       
       isRepositoryPiracy(repo).then((resp) => {
         var repoURLElem = document.getElementById("group1-template").content.cloneNode(true);
@@ -161,6 +158,10 @@
         repoButtonsElem.querySelector(`#${key}`).href = pkgmanDict[key];
       }
       document.getElementById("repo-btns").appendChild(repoButtonsElem);
+      
+      if (pkgman != null) {
+        window.location.replace(pkgmanDict[pkgman.toLowerCase()])
+      }
     }
   </script>
 </body>
