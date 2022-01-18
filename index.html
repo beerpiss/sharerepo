@@ -23,9 +23,7 @@
 
 <body>
   <template id="usage-template">
-    <center>
-      <h1></h1>
-    </center>
+      <h1 style="text-align: justify;"></h1>
   </template>
 
   <template id="group1-template">
@@ -97,9 +95,13 @@
 
     var urlParams = new URLSearchParams(window.location.search);
     var repo = urlParams.get('repo');
+    var pkgman = urlParams.get('pkgman');
     if (repo == null){
       usage = document.getElementById("usage-template").content.cloneNode(true);
-      usage.querySelector('h1').innerText = `Usage: ${window.location.href}?repo=YOUR_REPO_URL`;
+      usage.querySelector('h1').innerText = `Usage: ${window.location.href}?repo=YOUR_REPO_URL\n
+        All URL parameters:
+        - repo: the repo you want to add
+        - pkgman (optional): the package manager to add to (sileo, zebra, cydia, installer, saily)`;
       
       usageElem = document.getElementById("usage");
       usageElem.appendChild(usage);
@@ -114,13 +116,16 @@
       usageElem.removeAttribute("hidden");
     }
     else {
-      var pkgman = {
+      var pkgmanDict = {
         "cydia": `https://cydia.saurik.com/api/share#?source=${repo}`,
         "sileo": `sileo://source/${repo}`,
         "zebra": `zbra://${repo}`,
         "installer": `installer://add/${repo}`,
         "saily": `apt-repo://${repo}`
       };
+      if (pkgman != null) {
+        window.location.replace(pkgmanDict[pkgman.toLowerCase()])
+      }
       
       isRepositoryPiracy(repo).then((resp) => {
         var repoURLElem = document.getElementById("group1-template").content.cloneNode(true);
@@ -152,8 +157,8 @@
       })
       
       var repoButtonsElem = document.getElementById("repo-btns-template").content.cloneNode(true);
-      for (var key in pkgman) {
-        repoButtonsElem.querySelector(`#${key}`).href = pkgman[key];
+      for (var key in pkgmanDict) {
+        repoButtonsElem.querySelector(`#${key}`).href = pkgmanDict[key];
       }
       document.getElementById("repo-btns").appendChild(repoButtonsElem);
     }
