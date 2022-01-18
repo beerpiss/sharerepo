@@ -137,6 +137,8 @@
           warningIconElem.setAttribute("style", "text-align: center; color: var(--nord13); font-size:75px; margin-top: 30px; margin-left: auto; margin-right: auto; display: block;")
           repoURLElem.querySelector('#piracy-warning').removeAttribute("hidden")
           repoURLElem.insertBefore(warningIconElem, repoURLElem.querySelector('#repo-url'));
+
+          document.getElementById("repo-btns").remove();
         }
         else {
           var repoImageElem = new Image();
@@ -152,15 +154,15 @@
           }
           repoImageElem.src = `${repo.replace(/\/$/, '')}/CydiaIcon.png`;
           repoURLElem.insertBefore(repoImageElem, repoURLElem.querySelector('#repo-url'));
+
+          var repoButtonsElem = document.getElementById("repo-btns-template").content.cloneNode(true);
+          for (var key in pkgmanDict) {
+            repoButtonsElem.querySelector(`#${key}`).href = pkgmanDict[key];
+          }
+          document.getElementById("repo-btns").appendChild(repoButtonsElem);
         }
         document.getElementById("group1").appendChild(repoURLElem);
       })
-      
-      var repoButtonsElem = document.getElementById("repo-btns-template").content.cloneNode(true);
-      for (var key in pkgmanDict) {
-        repoButtonsElem.querySelector(`#${key}`).href = pkgmanDict[key];
-      }
-      document.getElementById("repo-btns").appendChild(repoButtonsElem);
     }
   </script>
 </body>
