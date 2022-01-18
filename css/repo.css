@@ -1,6 +1,5 @@
 h1 {
     text-align: center;
-    margin: 25px 30px;
 }
 
 h3 {
@@ -128,12 +127,17 @@ span {
 
     h1 {
         text-align: center;
-        margin: 25px 30px;
         font-size: 25px;
     }
 
     h3 {
         font-size: 20px;
+    }
+
+    h3#piracy-warning {
+        text-align: justify;
+        margin: 25px 30px;
+        font-size: 18px;
     }
 
     img.logo-main {
@@ -255,7 +259,14 @@ span {
 
     h1 {
         text-align: center;
+        margin: 25px 30px;
         width: auto;
+    }
+    
+    h3#piracy-warning {
+        text-align: justify;
+        margin: 25px 250px;
+        font-size: 18px;
     }
 
     body>div {
