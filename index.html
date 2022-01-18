@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-  <meta property="og:title" content="client side sharerepo">
+  <meta property="og:title" content="nordic sharerepo">
   <meta property="og:type" content="website">
 
   <meta charset="UTF-8">
@@ -72,12 +72,8 @@
   </div>
 
   <script>
-    function isRepositoryPiracy(repo){
-      request = new XMLHttpRequest();
-      request.open('GET', 'https://raw.githubusercontent.com/cnstr/manifests/gh-pages/piracy-repositories.json', false);
-      request.send(null);
-
-      piracyList = JSON.parse(request.responseText)
+    async function isRepositoryPiracy(repo) {
+      piracyList = await fetch("https://raw.githubusercontent.com/cnstr/manifests/gh-pages/piracy-repositories.json").then(resp => resp.json());
       return piracyList.includes((new URL(repo)).hostname)
     }
 
@@ -125,39 +121,40 @@
         "installer": `installer://add/${repo}`,
         "saily": `apt-repo://${repo}`
       };
-      var repoImageElem = new Image();
-      repoImageElem.setAttribute("hidden", "");
-      repoImageElem.loading = "eager";
-      repoImageElem.id = "logo-main";
-      repoImageElem.onload = () => {
-        image = document.getElementById("logo-main");
-        if (image.complete && image.naturalHeight > 0){
-          image.removeAttribute("hidden")
-          image.className = "logo-main";
-        }
-      }
-      repoImageElem.src = `${repo.replace(/\/$/, '')}/CydiaIcon.png`;
       
-      var repoURLElem = document.getElementById("group1-template").content.cloneNode(true);
-      repoURLElem.querySelector('#repo-url').innerText = repo;
-      if (isRepositoryPiracy(repo)) {
-        warningIconElem = document.createElement("i");
-        warningIconElem.className = "fa fa-exclamation-triangle"
-        warningIconElem.setAttribute("aria-hidden", true)
-        warningIconElem.setAttribute("style", "text-align: center; color: var(--nord13); font-size:75px; margin-top: 30px; margin-left: auto; margin-right: auto; display: block;")
-        repoURLElem.querySelector('#piracy-warning').removeAttribute("hidden")
-        repoURLElem.insertBefore(warningIconElem, repoURLElem.querySelector('#repo-url'));
-      }
-      else {
-        repoURLElem.insertBefore(repoImageElem, repoURLElem.querySelector('#repo-url'));
-      }
+      isRepositoryPiracy(repo).then((resp) => {
+        var repoURLElem = document.getElementById("group1-template").content.cloneNode(true);
+        repoURLElem.querySelector('#repo-url').innerText = repo;
+        if (resp) {
+          warningIconElem = document.createElement("i");
+          warningIconElem.className = "fa fa-exclamation-triangle"
+          warningIconElem.setAttribute("aria-hidden", true)
+          warningIconElem.setAttribute("style", "text-align: center; color: var(--nord13); font-size:75px; margin-top: 30px; margin-left: auto; margin-right: auto; display: block;")
+          repoURLElem.querySelector('#piracy-warning').removeAttribute("hidden")
+          repoURLElem.insertBefore(warningIconElem, repoURLElem.querySelector('#repo-url'));
+        }
+        else {
+          var repoImageElem = new Image();
+          repoImageElem.setAttribute("hidden", "");
+          repoImageElem.loading = "eager";
+          repoImageElem.id = "logo-main";
+          repoImageElem.onload = () => {
+            image = document.getElementById("logo-main");
+            if (image.complete && image.naturalHeight > 0){
+              image.removeAttribute("hidden")
+              image.className = "logo-main";
+            }
+          }
+          repoImageElem.src = `${repo.replace(/\/$/, '')}/CydiaIcon.png`;
+          repoURLElem.insertBefore(repoImageElem, repoURLElem.querySelector('#repo-url'));
+        }
+        document.getElementById("group1").appendChild(repoURLElem);
+      })
       
       var repoButtonsElem = document.getElementById("repo-btns-template").content.cloneNode(true);
       for (var key in pkgman) {
         repoButtonsElem.querySelector(`#${key}`).href = pkgman[key];
       }
-
-      document.getElementById("group1").appendChild(repoURLElem);
       document.getElementById("repo-btns").appendChild(repoButtonsElem);
     }
   </script>
