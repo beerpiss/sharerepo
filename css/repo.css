@@ -6,6 +6,11 @@ h3 {
     text-align: justify;
 }
 
+.icon {
+    border-radius: 22.5%;
+    border: 1px solid rgba(0, 0, 0, 0.125);
+}
+
 .logo-main {
     width: 150px;
     margin-top: 30px;
@@ -196,14 +201,6 @@ span {
 
     .btn#saily {
         background-color: var(--nord10);
-    }
-
-    #saily > img {
-        border-radius: 5px;
-    }
-
-    #zebra > img {
-        border-radius: 5px;
     }
 
     #cydia {

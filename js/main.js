@@ -2,48 +2,36 @@ async function main() {
     var urlParams = new URLSearchParams(window.location.search);
     var repo = urlParams.get('repo');
     var pkgman = urlParams.get('pkgman');
-    if (repo === null){
-        usage = document.getElementById("usage-template").content.cloneNode(true);
-        usage.querySelector('h1').innerText = `Usage: ${window.location.href}?repo=YOUR_REPO_URL\n
+    if (repo === null) {
+        drawUsage(`Usage: ${window.location.href}?repo=YOUR_REPO_URL\n
         All URL parameters:
         - repo: the repo you want to add
-        - pkgman (optional): the package manager to add to (sileo, zebra, cydia, installer, saily)`;
-        
-        usageElem = document.getElementById("usage");
-        usageElem.appendChild(usage);
-        usageElem.removeAttribute("hidden");
+        - pkgman (optional): the package manager to add to (sileo, zebra, cydia, installer, saily)`);
     }
     else if (isRepositoryDefault(repo)) {
-        usage = document.getElementById("usage-template").content.cloneNode(true);
-        usage.querySelector('h1').innerText = `Cannot add default repo: ${repo}`;
-        
-        usageElem = document.getElementById("usage");
-        usageElem.appendChild(usage);
-        usageElem.removeAttribute("hidden");
+        drawUsage(`Cannot add default repo: ${repo}`);
     }
     else {
         drawPage(repo, pkgman);
     }
 }
 
+
+// Repository-related functions {{{
 async function isRepositoryPiracy(repo) {
-    piracyList = await fetch("https://raw.githubusercontent.com/cnstr/manifests/gh-pages/piracy-repositories.json")
-        .then(resp => resp.json());
-    return piracyList.includes((new URL(repo)).hostname)
-
-    // For when Tale adds CORS support
-
-    // isPiracy = await fetch(`https://api.canister.me/v1/community/repositories/check?query=${repo}`)
-    //     .then(resp => resp.json())
-    //     .then(data => data.data.status)
-    // return (isPiracy == "unsafe") ? true : false
+    isPiracy = await fetch(`https://api.canister.me/v1/community/repositories/check?query=${repo}`)
+        .then(resp => resp.json())
+        .then(data => data.data.status)
+    return (isPiracy == "unsafe") ? true : false
 }
+
 
 async function getRepositoryName(repo) {
     return await fetch(`https://api.canister.me/v1/community/repositories/search?query=${repo}`)
     .then(resp => resp.json())
     .then(data => (data.data.length !== 0) ? data.data[0].name : repo);
 }
+
 
 function isRepositoryDefault(repo){
     repo = repo.replace(/\/$/, '');
@@ -62,6 +50,19 @@ function isRepositoryDefault(repo){
     var repoURL = new URL(repo);
     return defaultRepos.includes(repoURL.hostname + repoURL.pathname);
 }
+// }}}
+
+
+// Website-drawing functions {{{
+async function drawUsage(message) {
+    usage = document.getElementById("usage-template").content.cloneNode(true);
+    usage.querySelector('h1').innerText = message;
+    
+    usageElem = document.getElementById("usage");
+    usageElem.appendChild(usage);
+    usageElem.removeAttribute("hidden");
+}
+
 
 async function drawPage(repo, pkgman) {
     var pkgmanDict = {
@@ -72,9 +73,11 @@ async function drawPage(repo, pkgman) {
         "saily": `apt-repo://${repo}`
     };
     
+    // Build the icon and URL element of the page
     var repoURLElem = document.getElementById("group1-template").content.cloneNode(true);
-    repoURLElem.querySelector('#repo-url').innerText = repo; // await getRepositoryName(repo);
+    repoURLElem.querySelector('#repo-url').innerText = await getRepositoryName(repo);
     if (await isRepositoryPiracy(repo)) {
+        // If pirate, load warning
         warningIconElem = document.createElement("i");
         warningIconElem.className = "fa fa-exclamation-triangle";
         warningIconElem.setAttribute("aria-hidden", true);
@@ -85,10 +88,12 @@ async function drawPage(repo, pkgman) {
         document.getElementById("repo-btns").remove();
     }
     else {
+        // If not pirate, load website
         if (pkgman !== null) {
             window.location.href = pkgmanDict[pkgman.toLowerCase()];
         }
 
+        // Repo icon
         var repoImageElem = new Image();
         repoImageElem.setAttribute("hidden", "");
         repoImageElem.loading = "eager";
@@ -96,13 +101,18 @@ async function drawPage(repo, pkgman) {
         repoImageElem.onload = () => {
             image = document.getElementById("logo-main");
             if (image.complete && image.naturalHeight > 0){
-            image.removeAttribute("hidden");
-            image.className = "logo-main";
+                image.removeAttribute("hidden");
+                image.className = "icon logo-main";
             }
+        }
+        repoImageElem.onerror = () => {
+            image = document.getElementById("logo-main");
+            image.src = "icons/sad-iphone.png"
         }
         repoImageElem.src = `${repo.replace(/\/$/, '')}/CydiaIcon.png`;
         repoURLElem.insertBefore(repoImageElem, repoURLElem.querySelector('#repo-url'));
 
+        // Add to manager buttons
         var repoButtonsElem = document.getElementById("repo-btns-template").content.cloneNode(true);
         for (var key in pkgmanDict) {
             repoButtonsElem.querySelector(`#${key}`).href = pkgmanDict[key];
@@ -111,5 +121,7 @@ async function drawPage(repo, pkgman) {
     }
     document.getElementById("group1").appendChild(repoURLElem);
 }
+// }}}
+
 
 main();
