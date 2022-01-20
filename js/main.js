@@ -75,7 +75,7 @@ async function drawPage(repo, pkgman) {
     
     // Build the icon and URL element of the page
     var repoURLElem = document.getElementById("group1-template").content.cloneNode(true);
-    repoURLElem.querySelector('#repo-url').innerText = await getRepositoryName(repo);
+    repoURLNamePromise = getRepositoryName(repo);
     if (await isRepositoryPiracy(repo)) {
         // If pirate, load warning
         warningIconElem = document.createElement("i");
@@ -119,6 +119,7 @@ async function drawPage(repo, pkgman) {
         }
         document.getElementById("repo-btns").appendChild(repoButtonsElem);
     }
+    repoURLElem.querySelector('#repo-url').innerText = await Promise.resolve(repoURLNamePromise);
     document.getElementById("group1").appendChild(repoURLElem);
 }
 // }}}
